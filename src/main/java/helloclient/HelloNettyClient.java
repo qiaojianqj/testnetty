@@ -1,4 +1,4 @@
-package client;
+package helloclient;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

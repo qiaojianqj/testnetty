@@ -15,17 +15,23 @@ public class HashMapTest {
     public static void main(String[] args) {
         employers.put ( "1", "qiaojian" );
         employers.put ( "2", "leo" );
-        employers.put ( "3", "guo" );
+        employers.put ( "3", null );
         employers.put ( "4", "min" );
+        employers.put ( null, "空1" );
 
         Iterator<Map.Entry<String, String>> iter = employers.entrySet ().iterator ();
         while (iter.hasNext ()) {
-            employers.put ( "5", "bab" );
+            //Exception in thread "main" java.util.ConcurrentModificationException
+            //employers.put ( "5", "bab" );
             Map.Entry<String, String> next = iter.next ();
-            if (next.getKey ().equals ( "2" )) {
+            if (( "2" ).equals (next.getKey ())) {
                 iter.remove ();
             }
         }
+        System.out.println ( employers.size () );
+        employers.put ( null, "空2" );
+        employers.put ( null, "空3" );
+        employers.put ( "3", "非空" );
         System.out.println ( employers.size () );
     }
 }

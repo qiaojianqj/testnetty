@@ -1,20 +1,22 @@
-package server;
+package timeserver;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 /**
- * @description: This is a tutorial of netty
- * @author: Qiao.Jian
- * @create: 2018-07-31 16:35
+ * @description:
+ * @create: 2018-11-07 16:25
  */
-public class HelloNettyServer {
+public class TimeServer {
+
     private int port;
 
-    public HelloNettyServer(int port) {
+    public TimeServer(int port) {
         this.port = port;
     }
 
@@ -22,8 +24,14 @@ public class HelloNettyServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup ();
         EventLoopGroup workGroup = new NioEventLoopGroup ();
         ServerBootstrap bootstrap = new ServerBootstrap ().group ( bossGroup, workGroup )
-                                        .channel ( NioServerSocketChannel.class )
-                                        .childHandler ( new ServerChannelInitializer() );
+                .channel ( NioServerSocketChannel.class )
+                .childHandler ( new ChannelInitializer<SocketChannel>()  {
+                    @Override
+                    public void initChannel(SocketChannel ch) throws Exception {
+                        //此处有顺序，Encoder必须在Handler之前
+                        ch.pipeline ().addLast ( new TimeEncoder (), new TimeServerHandler () );
+                    }
+                }) ;
         try {
             ChannelFuture future = bootstrap.bind (port).sync ();
             future.channel ().closeFuture ().sync ();
@@ -36,7 +44,7 @@ public class HelloNettyServer {
     }
 
     public static void main(String... args) {
-        HelloNettyServer helloNettyServer = new HelloNettyServer ( 7531 );
-        helloNettyServer.start ();
+        TimeServer timeServer = new TimeServer ( 7532 );
+        timeServer.start ();
     }
 }
