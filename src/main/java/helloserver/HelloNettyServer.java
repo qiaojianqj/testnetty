@@ -26,6 +26,7 @@ public class HelloNettyServer {
                                         .childHandler ( new ServerChannelInitializer() );
         try {
             ChannelFuture future = bootstrap.bind (port).sync ();
+            System.out.println ( "Server bind port returned channel: " + future.channel () );
             future.channel ().closeFuture ().sync ();
         } catch (Exception e) {
             e.printStackTrace ();
@@ -35,8 +36,14 @@ public class HelloNettyServer {
         }
     }
 
+    public static void startServer() {
+        new Thread (() -> {
+            HelloNettyServer nettyServer = new HelloNettyServer ( 7531 );
+            nettyServer.start ();
+        }).start ();
+    }
+
     public static void main(String... args) {
-        HelloNettyServer helloNettyServer = new HelloNettyServer ( 7531 );
-        helloNettyServer.start ();
+        HelloNettyServer.startServer ();
     }
 }

@@ -31,21 +31,31 @@ public class HelloNettyClient {
                 .handler ( new ClientChannelInitializer() );
         try {
             Channel channel = bootstrap.connect (address, port).sync ().channel ();
+            System.out.println ( "Client connect returned channel: " + channel );
             BufferedReader reader = new BufferedReader ( new InputStreamReader ( System.in ) );
             for (;;) {
                 String msg = reader.readLine ();
+                System.out.println ( "your input msg: " + msg );
                 if (msg == null) {
+                    System.out.println ( "error, input again" );
                     continue;
                 }
-                channel.writeAndFlush ( msg + "\r\n" );
+                //以下write操作会发送到Outbound处理
+                channel.writeAndFlush (  msg );
             }
         } catch (Exception e) {
             e.printStackTrace ();
         }
     }
 
+    public static void startClient() {
+        new Thread ( () -> {
+            HelloNettyClient nettyClient = new HelloNettyClient ( 7531, "127.0.0.1" );
+            nettyClient.start ();
+        }).start ();
+    }
+
     public static void main(String... args) {
-        HelloNettyClient helloNettyClient = new HelloNettyClient ( 7531, "127.0.0.1" );
-        helloNettyClient.start ();
+        HelloNettyClient.startClient ();
     }
 }

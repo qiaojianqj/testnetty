@@ -14,8 +14,11 @@ import io.netty.handler.codec.string.StringEncoder;
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel>{
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline ();
-        pipeline.addLast ( "decoder", new StringDecoder (  ) );
-        pipeline.addLast ( "encoder", new StringEncoder (  ) );
-        pipeline.addLast ( "handler", new HelloNettyServerHandler (  ) );
+        //以下顺序很重要: 保证在Inbound的write会传到Outbound
+        //pipeline.addLast ( "handler2", new HelloNettyServerOutboundHandler ( ) );
+        //pipeline.addLast ( "handler1", new HelloNettyServerInboundHandler (  ) );
+        //不从Inbound里write就不用管顺序
+        pipeline.addLast ( "handler1", new HelloNettyServerInboundHandler (  ) );
+        pipeline.addLast ( "handler2", new HelloNettyServerOutboundHandler ( ) );
     }
 }

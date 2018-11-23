@@ -15,8 +15,7 @@ import io.netty.handler.codec.string.StringEncoder;
 public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
-        pipeline.addLast ( "decoder", new StringDecoder (  ) );
-        pipeline.addLast ( "encoder", new StringEncoder (  ) );
-        pipeline.addLast ( "handler", new HelloNettyClientHandler (  ) );
+        pipeline.addLast ( "handler1", new HelloNettyClientInboundHandler (  ) );
+        pipeline.addLast ( "handler2", new HelloNettyClientOutboundHandler (  ) );
     }
 }

@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import timeclient.TimeDecoder;
 
 /**
  * @description:
@@ -29,7 +30,8 @@ public class TimeServer {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         //此处有顺序，Encoder必须在Handler之前
-                        ch.pipeline ().addLast ( new TimeEncoder (), new TimeServerHandler () );
+                        //ch.pipeline ().addLast ( new TimeEncoder (), new TimeServerHandler () );
+                        ch.pipeline ().addLast ( new TimeServerHandler () );
                     }
                 }) ;
         try {
@@ -43,8 +45,14 @@ public class TimeServer {
         }
     }
 
+    public static void startServer() {
+        new Thread (() -> {
+                TimeServer timeServer = new TimeServer ( 7532 );
+                timeServer.start ();
+        }).start ();
+    }
+
     public static void main(String... args) {
-        TimeServer timeServer = new TimeServer ( 7532 );
-        timeServer.start ();
+        TimeServer.startServer ();
     }
 }

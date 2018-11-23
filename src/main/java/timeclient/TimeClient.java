@@ -31,7 +31,8 @@ public class TimeClient {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         //此处有顺序，Decoder必须在Handler之前
-                       ch.pipeline ().addLast ( new TimeDecoder (), new TimeClientHandler () );
+                       //ch.pipeline ().addLast ( new TimeDecoder (), new TimeClientHandler () );
+                        ch.pipeline ().addLast ( new TimeClientHandler () );
                     }
                 } );
         try {
@@ -42,8 +43,14 @@ public class TimeClient {
         }
     }
 
+    public static void startClient() {
+        new Thread ( () -> {
+            TimeClient timeClient = new TimeClient ( 7532, "127.0.0.1" );
+            timeClient.start ();
+        }).start ();
+    }
+
     public static void main(String... args) {
-        TimeClient timeClient = new TimeClient ( 7532, "127.0.0.1" );
-        timeClient.start ();
+        TimeClient.startClient ();
     }
 }

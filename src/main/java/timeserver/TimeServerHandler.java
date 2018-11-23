@@ -1,11 +1,11 @@
 package timeserver;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import time.UnixTime;
+import writechannel.WriteChannel;
+
+import java.text.SimpleDateFormat;
 
 /**
  * @description:
@@ -17,7 +17,21 @@ public class TimeServerHandler extends ChannelInboundHandlerAdapter {
         //final ByteBuf time = ctx.alloc ().buffer ();
         //time.writeInt ( (int)(System.currentTimeMillis () / 1000L + 2208988800L) );
         //final ChannelFuture future = ctx.writeAndFlush ( time );
-        final ChannelFuture future = ctx.writeAndFlush ( new UnixTime (  ));
-        future.addListener ( ChannelFutureListener.CLOSE );
+        WriteChannel.getInstance ().addChannelToCms ( ctx.channel () );
+        //final ChannelFuture future = ctx.writeAndFlush ( new UnixTime (  ));
+        //future.addListener ( ChannelFutureListener.CLOSE );
+    }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        //UnixTime m = (UnixTime) msg;
+        ByteBuf m = (ByteBuf)msg;
+        System.out.println ("TimeServer channel " + ctx.channel () + " read: " + new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss").format(m.readLong ()) );
+        //ctx.close ();
+    }
+
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) {
+        ctx.flush();
     }
 }
