@@ -36,6 +36,8 @@ public class SimpleServer {
                 .childHandler(new ChannelInitializer<NioSocketChannel> () {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //Inbound read 顺序传递 1 -> 2 -> 3
+                        //Outbound write 逆序传递 3 -> 2 -> 1
                         ch.pipeline().addLast(new SimpleDuplex1());
                         ch.pipeline().addLast(new SimpleDuplex2());
                         ch.pipeline().addLast(new SimpleDuplex3());
