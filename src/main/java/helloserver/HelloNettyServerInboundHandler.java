@@ -27,8 +27,11 @@ public class HelloNettyServerInboundHandler extends ChannelInboundHandlerAdapter
         System.out.println ("Server Inbound " + ctx.channel () + "==> helloserver: " + str );
 
         //以下write操作会发送到Outbound处理
-        //ByteBuf out = Unpooled.copyLong ( 456l );
-        //ctx.write ( out );
-        //ctx.flush ();
+        String inMsg = "added by hellInBound";
+        ByteBuf out = Unpooled.buffer(str.getBytes().length + inMsg.getBytes().length);
+        out.writeBytes(str.getBytes());
+        out.writeBytes(inMsg.getBytes());
+        ctx.write ( out );
+        ctx.flush ();
     }
 }

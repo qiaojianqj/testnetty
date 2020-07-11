@@ -19,8 +19,8 @@ public class HelloNettyServer {
     }
 
     public void start() {
-        EventLoopGroup bossGroup = new NioEventLoopGroup ();
-        EventLoopGroup workGroup = new NioEventLoopGroup ();
+        EventLoopGroup bossGroup = new NioEventLoopGroup (3); // 设置为3没意义
+        EventLoopGroup workGroup = new NioEventLoopGroup (3);
         ServerBootstrap bootstrap = new ServerBootstrap ().group ( bossGroup, workGroup )
                                         .channel ( NioServerSocketChannel.class )
                                         .childHandler ( new ServerChannelInitializer() );

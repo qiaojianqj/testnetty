@@ -7,6 +7,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 import timeclient.TimeDecoder;
 
 /**
@@ -24,6 +26,7 @@ public class TimeServer {
     public void start() {
         EventLoopGroup bossGroup = new NioEventLoopGroup ();
         EventLoopGroup workGroup = new NioEventLoopGroup ();
+        EventExecutorGroup busGroup = new DefaultEventExecutorGroup ( 2 );
         ServerBootstrap bootstrap = new ServerBootstrap ().group ( bossGroup, workGroup )
                 .channel ( NioServerSocketChannel.class )
                 .childHandler ( new ChannelInitializer<SocketChannel>()  {
@@ -32,6 +35,7 @@ public class TimeServer {
                         //此处有顺序，Encoder必须在Handler之前
                         //ch.pipeline ().addLast ( new TimeEncoder (), new TimeServerHandler () );
                         ch.pipeline ().addLast ( new TimeServerHandler () );
+                        ch.pipeline ().addLast ( busGroup );
                     }
                 }) ;
         try {

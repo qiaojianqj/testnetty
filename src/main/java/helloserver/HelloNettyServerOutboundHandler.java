@@ -14,11 +14,18 @@ public class HelloNettyServerOutboundHandler extends ChannelOutboundHandlerAdapt
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         System.out.println ( "Server Outbound ctx.channel: " + ctx.channel () );
-        //ByteBuf m0 = (ByteBuf)msg;
-        String m0 = (String)msg;
-        ByteBuf m = Unpooled.buffer (4 * m0.length ());
-        m.writeBytes ( m0.getBytes () );
-        ctx.write ( m );
-        ctx.flush();
+        ByteBuf m = (ByteBuf)msg;
+
+        byte[] r = new byte[m.readableBytes ()];
+        m.readBytes ( r );
+        String str = new String ( r );
+        String outMsg = "added by hellOutBound";
+
+        ByteBuf out = Unpooled.buffer (str.getBytes().length * outMsg.getBytes().length);
+        out.writeBytes(str.getBytes());
+        out.writeBytes(outMsg.getBytes());
+
+        ctx.write ( out );
+        ctx.flush ();
     }
 }

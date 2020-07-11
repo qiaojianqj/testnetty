@@ -39,7 +39,7 @@ public class WriteChannel {
 
     public static void main_Time() throws InterruptedException {
         TimeServer.startServer ();
-        //Thread.sleep (5000 );
+        Thread.sleep (5000 );
         TimeClient.startClient ();
 
         for (;;) {
@@ -81,7 +81,7 @@ public class WriteChannel {
     }
 
     public static void main(String[] args) throws Exception {
-        //main_Time ();
-        main_HelloNettyServer ();
+        main_Time ();
+        //main_HelloNettyServer ();
     }
 }

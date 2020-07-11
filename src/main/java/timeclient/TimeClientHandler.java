@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 public class TimeClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) {
+        System.out.println ( "Thread: " + Thread.currentThread ().getName () + ";TimeClient channelActive" );
         WriteChannel.getInstance ().addChannelToCms ( ctx.channel () );
     }
 
@@ -29,7 +30,7 @@ public class TimeClientHandler extends ChannelInboundHandlerAdapter {
         //}
         //UnixTime m = (UnixTime) msg;
         ByteBuf m = (ByteBuf)msg;
-        System.out.println ("TimeClient channel " + ctx.channel () +  " read: " + new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss").format (m.readLong ()));
+        System.out.println ("Thread: " + Thread.currentThread ().getName () + ";TimeClient channel " + ctx.channel () +  " read: " + new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss").format (m.readLong ()));
         //ctx.close ();
     }
 

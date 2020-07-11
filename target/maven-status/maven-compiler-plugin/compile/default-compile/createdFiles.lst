@@ -1,6 +1,0 @@
-client/HelloNettyClient.class
-client/ClientChannelInitializer.class
-server/ServerChannelInitializer.class
-client/HelloNettyClientHandler.class
-server/HelloNettyServerHandler.class
-server/HelloNettyServer.class
