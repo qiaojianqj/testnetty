@@ -102,6 +102,13 @@ public class MultiThreadSelectorServer {
                                 acceptHandler(selectionKey);
                             } else if (selectionKey.isReadable()) {
                                 readHandler(selectionKey);
+                            } else if (selectionKey.isConnectable()) {
+                                ((SocketChannel)selectionKey.channel()).finishConnect();
+                                System.out.println("Connect event coming: " + selectionKey.channel().toString());
+                            } else if (selectionKey.isWritable()) {
+                                //writable事件一般只在向channel write返回0表示发送缓冲区满时注册writable事件
+                                //并且在下次write发送完成后要取消writable事件，不然每次都会select出writable事件导致其他事件得不到处理
+                                System.out.println("Writable event coming: " + selectionKey.channel().toString());
                             }
                         }
                     }
@@ -111,6 +118,8 @@ public class MultiThreadSelectorServer {
                         client.configureBlocking(false);
                         ByteBuffer clientBuf = ByteBuffer.allocate(1024);
                         client.register(selector, SelectionKey.OP_READ, clientBuf);
+                        //client.register(selector, SelectionKey.OP_CONNECT);
+                        //client.register(selector, SelectionKey.OP_WRITE);
                         System.out.println("---new client---" + client.getRemoteAddress() + " in queue " + id);
                     }
 
@@ -143,7 +152,9 @@ public class MultiThreadSelectorServer {
                         clientBuf.clear();
                     } else if (num == 0) {
                         break;
-                    } else { // -1 close_wait 不加-1判断，客户端主动close会导致空轮询bug
+                    } else {
+                        // 客户端close会触发read事件，read返回-1表示客户端关闭
+                        // -1 close_wait 不加-1判断，客户端主动close会导致空轮询bug
                         System.out.println("client---" + client.getRemoteAddress() + " close");
                         client.close();
                         break;
