@@ -102,9 +102,6 @@ public class MultiThreadSelectorServer {
                                 acceptHandler(selectionKey);
                             } else if (selectionKey.isReadable()) {
                                 readHandler(selectionKey);
-                            } else if (selectionKey.isConnectable()) {
-                                ((SocketChannel)selectionKey.channel()).finishConnect();
-                                System.out.println("Connect event coming: " + selectionKey.channel().toString());
                             } else if (selectionKey.isWritable()) {
                                 //writable事件一般只在向channel write返回0表示发送缓冲区满时注册writable事件
                                 //并且在下次write发送完成后要取消writable事件，不然每次都会select出writable事件导致其他事件得不到处理
@@ -118,8 +115,6 @@ public class MultiThreadSelectorServer {
                         client.configureBlocking(false);
                         ByteBuffer clientBuf = ByteBuffer.allocate(1024);
                         client.register(selector, SelectionKey.OP_READ, clientBuf);
-                        //client.register(selector, SelectionKey.OP_CONNECT);
-                        //client.register(selector, SelectionKey.OP_WRITE);
                         System.out.println("---new client---" + client.getRemoteAddress() + " in queue " + id);
                     }
 
